@@ -1,10 +1,11 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
-  Difficulty,
-  QuestionState,
   fetchQuizQuestions,
+  fetchQuizCategories
 } from "../../utils/quizUtil"
+import QuizSettingsForm from "../QuizSettings"
 import QuestionCard from "../QuestionCard"
+import { SettingType, CategoriesType, QuestionState } from "../../types"
 import "./styles.css"
 
 export type AnswerObject = {
@@ -23,19 +24,56 @@ export function App() {
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([])
   const [score, setScore] = useState(0)
   const [gameOver, setGameOver] = useState(true)
+  const [categories, setCategories] = useState<CategoriesType[]>([]);
 
-  console.log(questions)
+  const [newSetting, setSetting] = useState<SettingType>({
+    numberOfQuestions: 5,
+    difficulty: "",
+    category: 9,
+    categoryName: "",
+    name: "",
+  });
+
+  useEffect(() => {
+    const getCategoriesData = async () => {
+      const fetchedCategories = await fetchQuizCategories();
+      setCategories(fetchedCategories);
+    };
+
+    getCategoriesData();
+  }, []);
+
+  if (!categories.length) {
+    return (
+        <div className="loading">
+            ...loading
+        </div>
+    );
+  }
+
+  let categoryName = categories.filter((category) => {
+      return category.id === newSetting.category;
+  });
+
+  const AppliedSettings: SettingType = {
+    numberOfQuestions: newSetting.numberOfQuestions,
+    difficulty: newSetting.difficulty,
+    category: newSetting.category,
+    categoryName: categoryName[0].name,
+    name: newSetting.name,
+  } 
 
   const startTrivia = async () => {
     setLoading(true)
     setGameOver(false)
 
-    //TODO: Add try catch to handle errors
-    const newQuestions = await fetchQuizQuestions(
-      TOTAL_QUESTIONS,
-      Difficulty.EASY,
-    )
-    setQuestions(newQuestions)
+    const fetchedData = await fetchQuizQuestions(
+      newSetting.numberOfQuestions,
+      newSetting.difficulty,
+      newSetting.category
+      );
+    setSetting(newSetting)
+    setQuestions(fetchedData);
     setScore(0)
     setUserAnswers([])
     setNumber(0)
@@ -77,13 +115,16 @@ export function App() {
       <header className="App-header">
         <h1>React Quiz</h1>
         {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
-          <button className="start" onClick={startTrivia}>
+          <div>
+          <QuizSettingsForm />
+            <button className="start" onClick={startTrivia}>
             Start
           </button>
+        </div>
         ) : null}
         {!gameOver ? <p className="score">Score: {score}</p> : null}
         {loading && <p>Loading Questions</p>}
-        {!loading && !gameOver && (
+        {!gameOver && !loading && (
           <QuestionCard
             questionNumber={number + 1}
             totalQuestions={TOTAL_QUESTIONS}
