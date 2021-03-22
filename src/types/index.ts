@@ -1,6 +1,21 @@
+import React from "react"
+
+export type AnswerObject = {
+    question: string
+    answer: string
+    correct: boolean
+    correctAnswer: string
+}
+
 export type CategoriesType = {
     id: number;
     name: string;
+}
+
+export enum Difficulty {
+    EASY = "easy",
+    MEDIUM = "medium",
+    HARD = "hard",
 }
 
 export type Question = {
@@ -26,4 +41,9 @@ export type SettingType = {
     category: number;
     categoryName: string;
     name: string;
+}
+
+export type SettingPropsType = {
+    newUserSetting: React.Dispatch<React.SetStateAction<SettingType>>
+    setSendRequest: React.Dispatch<React.SetStateAction<boolean>>
 }
