@@ -1,18 +1,60 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
-import { SettingType } from "../../types"
+import { CategoriesType, Difficulty, SettingType, SettingPropsType } from "../../types"
+import { fetchQuizCategories } from "../../utils/quizUtil"
 
-const QuizSettingsForm: React.FC<React.FormHTMLAttributes<HTMLFormElement>> = ({}) => {
-    const [userSetting, setUserSetting] = useState<SettingType>({
+const QuizSettingsForm: React.FC<SettingPropsType> = ({
+  newUserSetting,
+  setSendRequest
+}) => {
+  const [categories, setCategories] = useState<CategoriesType[]>([])
+  const { register, errors } = useForm<SettingType>()
+
+    const [newSetting, setUserSetting] = useState<SettingType>({
         numberOfQuestions: 5,
         difficulty: "easy",
         category: 9,
         categoryName: "General Knowledge",
         name: "",
       });
-    const { register, errors } = useForm<SettingType>()
+
+    useEffect(() => {
+      const getCategoriesData = async () => {
+        const fetchedCategories = await fetchQuizCategories();
+        setCategories(fetchedCategories);
+      };
+  
+      getCategoriesData();
+    }, []);
+  
+    if (!categories.length) {
+      return (
+          <div className="loading">
+              ...loading
+          </div>
+      );
+    }
+  
+    let categoryName = categories.filter((category) => {
+        return category.id === newSetting.category;
+    });
+  
+    const appliedSettings: SettingType = {
+      numberOfQuestions: newSetting.numberOfQuestions,
+      difficulty: newSetting.difficulty,
+      category: newSetting.category,
+      categoryName: categoryName[0].name,
+      name: newSetting.name
+    }
+  
+    const handleFormSubmit = (e: React.FormEvent<EventTarget>) => {
+      e.preventDefault()
+      newUserSetting(appliedSettings)
+      setSendRequest(true)
+    }
+
     return (
-      <form >
+      <form onSubmit={handleFormSubmit}>
         <div className="field">
           <label htmlFor="name">Name</label>
           <input
@@ -20,10 +62,10 @@ const QuizSettingsForm: React.FC<React.FormHTMLAttributes<HTMLFormElement>> = ({
             id="name"
             name="name"
             ref={register}
-            value={userSetting.name}
+            value={newSetting.name}
             onChange={(e) => {
                 setUserSetting({
-                  ...userSetting,
+                  ...newSetting,
                   name: String(e.target.value),
                 })
             }}
@@ -36,10 +78,10 @@ const QuizSettingsForm: React.FC<React.FormHTMLAttributes<HTMLFormElement>> = ({
             id="numberOfQuestions"
             name="numberOfQuestions"
             ref={register({required: true})}
-            value={userSetting.numberOfQuestions}
+            value={newSetting.numberOfQuestions}
             onChange={(e) => {
                 setUserSetting({
-                  ...userSetting,
+                  ...newSetting,
                   numberOfQuestions: Number(e.target.value),
                 })
             }}
@@ -48,47 +90,38 @@ const QuizSettingsForm: React.FC<React.FormHTMLAttributes<HTMLFormElement>> = ({
           <div className="error">You must enter the number of questions</div>
         )}
         </div>
-        <div className="field">
-          <label htmlFor="score">Difficulty</label>
-          <input
-            type="string"
-            id="difficulty"
-            name="difficulty"
-            ref={register({required: true})}
-            value={userSetting.difficulty}
+        <div className="difficulty">
+          <select name="difficulty" ref={register} 
             onChange={(e) => {
-                setUserSetting({
-                  ...userSetting,
-                  difficulty: String(e.target.value),
-                })
-            }}
-          />
-            {errors.difficulty && errors.difficulty.type === "required" && (
-            <div className="error">You must select a difficulty</div>
-        )}
+              setUserSetting({
+                ...newSetting,
+                difficulty: String(e.target.value),
+            })}}>
+              <option value={Difficulty.EASY}>Easy</option>
+              <option value={Difficulty.MEDIUM}>Medium</option>
+              <option value={Difficulty.HARD}>Hard</option>
+          </select>
         </div>
-        <div className="field">
-          <label htmlFor="score">Category</label>
-          <input
-            type="string"
-            id="category"
-            name="category"
-            ref={register({required: true})}
-            value={userSetting.category}
+        <div className="category">
+          <select name="category" ref={register} 
             onChange={(e) => {
-                setUserSetting({
-                  ...userSetting,
-                  category: Number(e.target.value),
-                })
-            }}
-          />
-           {errors.category && errors.category.type === "required" && (
-            <div className="error">You must select a category</div>
-        )}
+              setUserSetting({
+                ...newSetting,
+                category: Number(e.target.value),
+                categoryName: String(e.target.value)
+            })}}>
+                {categories.map((category) =>
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+                )}
+          </select>
         </div>
+        <button type="submit">
+          Start the quiz!!
+        </button>
       </form>
     );
-    
-  };
+  }
 
-  export default QuizSettingsForm
+export default QuizSettingsForm

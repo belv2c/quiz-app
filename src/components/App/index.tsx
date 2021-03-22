@@ -1,84 +1,28 @@
 import { useEffect, useState } from "react"
-import {
-  fetchQuizQuestions,
-  fetchQuizCategories
-} from "../../utils/quizUtil"
+import { fetchQuizQuestions } from "../../utils/quizUtil"
 import QuizSettingsForm from "../QuizSettings"
 import QuestionCard from "../QuestionCard"
-import { SettingType, CategoriesType, QuestionState } from "../../types"
+import { AnswerObject, SettingType, QuestionState } from "../../types"
 import "./styles.css"
-
-export type AnswerObject = {
-  question: string
-  answer: string
-  correct: boolean
-  correctAnswer: string
-}
 
 const TOTAL_QUESTIONS = 10
 
 export function App() {
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [questions, setQuestions] = useState<QuestionState[]>([])
   const [number, setNumber] = useState(0)
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([])
   const [score, setScore] = useState(0)
   const [gameOver, setGameOver] = useState(true)
-  const [categories, setCategories] = useState<CategoriesType[]>([]);
+  const [sendRequest, setSendRequest] = useState(false)
 
-  const [newSetting, setSetting] = useState<SettingType>({
+  const [newSetting, newUserSetting] = useState<SettingType>({
     numberOfQuestions: 5,
     difficulty: "",
     category: 9,
     categoryName: "",
     name: "",
   });
-
-  useEffect(() => {
-    const getCategoriesData = async () => {
-      const fetchedCategories = await fetchQuizCategories();
-      setCategories(fetchedCategories);
-    };
-
-    getCategoriesData();
-  }, []);
-
-  if (!categories.length) {
-    return (
-        <div className="loading">
-            ...loading
-        </div>
-    );
-  }
-
-  let categoryName = categories.filter((category) => {
-      return category.id === newSetting.category;
-  });
-
-  const AppliedSettings: SettingType = {
-    numberOfQuestions: newSetting.numberOfQuestions,
-    difficulty: newSetting.difficulty,
-    category: newSetting.category,
-    categoryName: categoryName[0].name,
-    name: newSetting.name,
-  } 
-
-  const startTrivia = async () => {
-    setLoading(true)
-    setGameOver(false)
-
-    const fetchedData = await fetchQuizQuestions(
-      newSetting.numberOfQuestions,
-      newSetting.difficulty,
-      newSetting.category
-      );
-    setSetting(newSetting)
-    setQuestions(fetchedData);
-    setScore(0)
-    setUserAnswers([])
-    setNumber(0)
-    setLoading(false)
-  }
 
   const checkAnswer = (e: any) => {
     if (!gameOver) {
@@ -110,24 +54,47 @@ export function App() {
     }
   }
 
+  useEffect(() => {
+    setLoading(true)
+    setGameOver(true)
+    setSendRequest(false)
+
+    const fetchQuestions = async () => {
+      if (sendRequest) {
+        const fetchedData = await fetchQuizQuestions(
+          newSetting.numberOfQuestions,
+          newSetting.difficulty,
+          newSetting.category
+        );
+        setQuestions(fetchedData)
+        setScore(0)
+        setUserAnswers([])
+        setNumber(0)
+        setLoading(false)
+        setGameOver(false)
+      }
+    }
+   fetchQuestions();
+  }, [newSetting, sendRequest]);
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>React Quiz</h1>
-        {gameOver || userAnswers.length === TOTAL_QUESTIONS ? (
+        {gameOver || loading || userAnswers.length === TOTAL_QUESTIONS ? (
           <div>
-          <QuizSettingsForm />
-            <button className="start" onClick={startTrivia}>
-            Start
-          </button>
+          <QuizSettingsForm 
+            newUserSetting={newUserSetting} 
+            setSendRequest={setSendRequest}
+          />
         </div>
         ) : null}
         {!gameOver ? <p className="score">Score: {score}</p> : null}
         {loading && <p>Loading Questions</p>}
-        {!gameOver && !loading && (
+        {!loading && !gameOver && (
           <QuestionCard
             questionNumber={number + 1}
-            totalQuestions={TOTAL_QUESTIONS}
+            totalQuestions={newSetting.numberOfQuestions}
             question={questions[number].question}
             answers={questions[number].answer}
             userAnswer={userAnswers ? userAnswers[number] : undefined}

@@ -1,11 +1,5 @@
 import { CategoriesType, Question, QuestionState } from "../../types"
 
- export enum Difficulty {
-    EASY = "easy",
-    MEDIUM = "medium",
-    HARD = "hard",
-  }
-  
   export const shuffleArray = (array: any[]) =>
     [...array].sort(() => Math.random() - 0.5)
   
@@ -14,7 +8,7 @@ import { CategoriesType, Question, QuestionState } from "../../types"
     difficulty: string,
     category: number,
   ): Promise<QuestionState[]> => {
-    const endpoint = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}&type=multiple`
+    const endpoint = `https://opentdb.com/api.php?amount=${amount}&category=${category}&difficulty=${difficulty}`
     const data = await (await fetch(endpoint)).json()
     
        return data.results.map((question: Question) => ({
