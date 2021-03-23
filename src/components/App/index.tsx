@@ -3,6 +3,9 @@ import { fetchQuizQuestions } from "../../utils/quizUtil"
 import QuizSettingsForm from "../QuizSettings"
 import { QuestionCard } from "../QuestionCard"
 import { AnswerObject, SettingType, QuestionState } from "../../types"
+import {
+  Button,
+} from "@material-ui/core";
 import "./styles.css"
 
 const TOTAL_QUESTIONS = 10
@@ -100,14 +103,18 @@ export function App() {
             callback={checkAnswer}
           />
         )}
-        {!gameOver &&
-        !loading &&
-        userAnswers.length === number + 1 &&
-        number !== TOTAL_QUESTIONS - 1 ? (
-          <button className="next" onClick={nextQuestion}>
-            Next Question
-          </button>
-        ) : null}
+        {!gameOver && !loading && userAnswers.length === number + 1 &&
+          number !== TOTAL_QUESTIONS - 1 ? (
+            <Button 
+              className="next"
+              type="submit" 
+              variant="contained" 
+              color="primary"
+              onClick={nextQuestion}
+            >
+              Next Question
+            </Button>
+          ) : null}
       </header>
     </div>
   )
