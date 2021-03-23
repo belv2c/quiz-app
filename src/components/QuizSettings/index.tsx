@@ -158,7 +158,7 @@ const QuizSettingsForm: React.FC<SettingPropsType> = ({
           </FormControl>
           <Box pt={4} pb={1}>
             <Button type="submit" variant="contained" color="primary">
-              Start the quiz!
+              Take the quiz!
             </Button>
           </Box>
       </form>

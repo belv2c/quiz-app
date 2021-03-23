@@ -80,7 +80,6 @@ export function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>React Quiz</h1>
         {gameOver || loading || userAnswers.length === TOTAL_QUESTIONS ? (
           <div>
           <QuizSettingsForm 
@@ -89,8 +88,8 @@ export function App() {
           />
         </div>
         ) : null}
+        {!gameOver ? <p className="name">Hello {newSetting.name}</p> : null}
         {!gameOver ? <p className="score">Score: {score}</p> : null}
-        {loading && <p>Loading Questions</p>}
         {!loading && !gameOver && (
           <QuestionCard
             questionNumber={number + 1}

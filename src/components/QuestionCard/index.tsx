@@ -1,17 +1,22 @@
 import React from "react"
 import { AnswerObject } from "../../types"
+import {
+  Radio,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+} from "@material-ui/core"
 
 interface Props {
   question: string
   answers: string[]
-  //callback: (e: React.MouseEvent<HTMLButtonElement>) => void
-  callback: React.MouseEventHandler<HTMLButtonElement>
+  callback: ((event: React.ChangeEvent<HTMLInputElement>, value: string) => void)
   userAnswer: AnswerObject | undefined
   questionNumber: number
   totalQuestions: number
 }
 
-type QuestionProps = React.PropsWithChildren<Props>;
+type QuestionProps = React.PropsWithChildren<Props>
 
 const QuestionCard = ({
   question,
@@ -31,15 +36,13 @@ const QuestionCard = ({
     <div>
       {answers.map((answer) => ( 
         <div key={answer}>
-          <button
-            disabled={userAnswer ? true : false}
-            value={answer}
-            onClick={callback}
-          >
-            <span>
-              {answer}
-            </span>
-          </button>
+          <form>
+            <FormControl component="fieldset">
+              <RadioGroup aria-label="quiz" name="quiz" onChange={callback}>
+                <FormControlLabel value={answer} control={<Radio />} label={answer} />
+              </RadioGroup>
+            </FormControl>
+          </form>
         </div>
       ))}
     </div>
