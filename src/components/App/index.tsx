@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { fetchQuizQuestions } from "../../utils/quizUtil"
 import QuizSettingsForm from "../QuizSettings"
-import QuestionCard from "../QuestionCard"
+import { QuestionCard } from "../QuestionCard"
 import { AnswerObject, SettingType, QuestionState } from "../../types"
 import "./styles.css"
 
