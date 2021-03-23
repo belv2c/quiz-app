@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react"
 import { fetchQuizQuestions } from "../../utils/quizUtil"
 import QuizSettingsForm from "../QuizSettings"
-import QuestionCard from "../QuestionCard"
+import { QuestionCard } from "../QuestionCard"
 import { AnswerObject, SettingType, QuestionState } from "../../types"
+import {
+  Button,
+} from "@material-ui/core";
 import "./styles.css"
 
 const TOTAL_QUESTIONS = 10
@@ -80,7 +83,6 @@ export function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>React Quiz</h1>
         {gameOver || loading || userAnswers.length === TOTAL_QUESTIONS ? (
           <div>
           <QuizSettingsForm 
@@ -89,8 +91,8 @@ export function App() {
           />
         </div>
         ) : null}
+        {!gameOver ? <p className="name">Hello {newSetting.name}</p> : null}
         {!gameOver ? <p className="score">Score: {score}</p> : null}
-        {loading && <p>Loading Questions</p>}
         {!loading && !gameOver && (
           <QuestionCard
             questionNumber={number + 1}
@@ -101,14 +103,18 @@ export function App() {
             callback={checkAnswer}
           />
         )}
-        {!gameOver &&
-        !loading &&
-        userAnswers.length === number + 1 &&
-        number !== TOTAL_QUESTIONS - 1 ? (
-          <button className="next" onClick={nextQuestion}>
-            Next Question
-          </button>
-        ) : null}
+        {!gameOver && !loading && userAnswers.length === number + 1 &&
+          number !== TOTAL_QUESTIONS - 1 ? (
+            <Button 
+              className="next"
+              type="submit" 
+              variant="contained" 
+              color="primary"
+              onClick={nextQuestion}
+            >
+              Next Question
+            </Button>
+          ) : null}
       </header>
     </div>
   )
