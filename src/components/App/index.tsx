@@ -82,7 +82,7 @@ export function App() {
 
   return (
     <div className="App">
-      <header className="App-header">
+      <header>
         {gameOver || loading || userAnswers.length === TOTAL_QUESTIONS ? (
           <div>
           <QuizSettingsForm 
