@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
 import { fetchQuizQuestions } from "../../utils/quizUtil"
-import QuizSettingsForm from "../QuizSettings"
+import { QuizSettingsForm } from "../QuizSettings"
+import { Result } from "../Result"
 import { QuestionCard } from "../QuestionCard"
 import { AnswerObject, SettingType, QuestionState } from "../../types"
 import {
   Button,
-} from "@material-ui/core";
+} from "@material-ui/core"
 import "./styles.css"
 
 export function App() {
@@ -16,6 +17,7 @@ export function App() {
   const [score, setScore] = useState(0)
   const [gameOver, setGameOver] = useState(true)
   const [sendRequest, setSendRequest] = useState(false)
+  const [showResult, setShowResult] = useState(false)
 
   const [newSetting, newUserSetting] = useState<SettingType>({
     numberOfQuestions: 5,
@@ -23,7 +25,7 @@ export function App() {
     category: 9,
     categoryName: "",
     name: "",
-  });
+  })
 
   const checkAnswer = (e: any) => {
     if (!gameOver) {
@@ -44,12 +46,19 @@ export function App() {
     }
   }
 
+  const newQuiz = () => {
+    // clear the state to return back to settings page
+    setGameOver(true)
+    setShowResult(false)
+  }
+
   const nextQuestion = () => {
     //Move onto the next question if not the last question
     const nextQuestion = number + 1
 
     if (nextQuestion === questions.length) {
       setGameOver(true)
+      setShowResult(true)
     } else {
       setNumber(nextQuestion)
     }
@@ -66,7 +75,7 @@ export function App() {
           newSetting.numberOfQuestions,
           newSetting.difficulty,
           newSetting.category
-        );
+        )
         setQuestions(fetchedData)
         setScore(0)
         setUserAnswers([])
@@ -75,21 +84,31 @@ export function App() {
         setGameOver(false)
       }
     }
-   fetchQuestions();
-  }, [newSetting, sendRequest]);
+   fetchQuestions()
+  }, [newSetting, sendRequest])
 
   return (
     <div className="App">
       <header>
-        {gameOver || loading || userAnswers.length === questions.length ? (
+        {gameOver && !showResult  ? (
           <div>
-          <QuizSettingsForm 
-            newUserSetting={newUserSetting} 
-            setSendRequest={setSendRequest}
+            <QuizSettingsForm 
+              newUserSetting={newUserSetting} 
+              setSendRequest={setSendRequest}
+            />
+          </div>
+          ) : null}
+        {showResult && gameOver && (
+          <Result
+            name={newSetting.name}
+            totalScore={score}
+            numberOfQuestions={newSetting.numberOfQuestions}
+            category={newSetting.categoryName}
+            difficulty={newSetting.difficulty}
+            callback={newQuiz}
           />
-        </div>
-        ) : null}
-        {!gameOver ? <p className="name">Hello {newSetting.name}</p> : null}
+        )}
+        {!gameOver ? <p className="name">Hi, {newSetting.name}</p> : null}
         {!loading && !gameOver && (
           <QuestionCard
             questionNumber={number + 1}
@@ -100,18 +119,18 @@ export function App() {
             callback={checkAnswer}
           />
         )} 
-    {!gameOver && !loading && 
-      number !== number - 1 ? (
-        <Button 
-          className="next"
-          type="submit" 
-          variant="contained" 
-          color="primary"
-          onClick={nextQuestion}      
-        >
-          Next Question
-        </Button>
-      ) : null}      
+        {!gameOver && !loading && 
+          number !== number - 1 ? (
+            <Button 
+              className="next"
+              type="submit" 
+              variant="contained" 
+              color="primary"
+              onClick={nextQuestion}      
+            >
+              Next Question
+            </Button>
+          ) : null}      
       </header>
     </div>
   )

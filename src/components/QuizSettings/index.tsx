@@ -40,12 +40,11 @@ const useStyles = makeStyles({
   }
 });
 
-// TODO: refactor to not use React.FC
 // TODO: add error handling
-const QuizSettingsForm: React.FC<SettingPropsType> = ({
+export const QuizSettingsForm = ({
   newUserSetting,
-  setSendRequest
-}) => {
+  setSendRequest,
+}: SettingPropsType) => {
   const [categories, setCategories] = useState<CategoriesType[]>([])
   const [newSetting, setUserSetting] = useState<SettingType>({
       numberOfQuestions: 5,
@@ -142,7 +141,8 @@ const QuizSettingsForm: React.FC<SettingPropsType> = ({
                 setUserSetting({
                   ...newSetting,
                   difficulty: String(e.target.value),
-              })}}
+                })
+              }}
             >
               <option value={Difficulty.EASY}>Easy</option>
               <option value={Difficulty.MEDIUM}>Medium</option>
@@ -161,7 +161,8 @@ const QuizSettingsForm: React.FC<SettingPropsType> = ({
                   ...newSetting,
                   category: Number(e.target.value),
                   categoryName: String(e.target.value)
-                })}}
+                })
+              }}
             >
                {categories.map((category) =>
                   <option key={category.id} value={category.id}>
@@ -181,5 +182,3 @@ const QuizSettingsForm: React.FC<SettingPropsType> = ({
   </>
   );
 }
-
-export default QuizSettingsForm
