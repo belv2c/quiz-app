@@ -10,14 +10,20 @@ import {
   Button,
   Box,
 } from "@material-ui/core";
+import particlesConfig from "../../particlesConfig.json"
+import Particles from "react-tsparticles"
 
 const useStyles = makeStyles({
   root: {
+    background: "rgba(255, 255, 255, 0.3)",
+    padding: "2em",
+    position: "absolute",
+    width: "40%",
+    top: "10%",
+    left: "30%",
+    marginLeft: "auto",
     justifyItems: "center",
-    alignItems: "center",
-    height: "100vh",
-    width: "100%",
-    display: "flex",
+    alignContent: "center",
   },
   title: {
     fontSize: 14,
@@ -25,6 +31,12 @@ const useStyles = makeStyles({
   textFields: {
     width: "100%",
     marginTop: "20px",
+  },
+  tsParticles: {
+    position: "fixed",
+    width: "100%",
+    height: "100%",
+    zIndex: -1
   }
 });
 
@@ -81,6 +93,8 @@ const QuizSettingsForm: React.FC<SettingPropsType> = ({
     }
 
     return (
+      <>
+      <Particles options={particlesConfig} id="tsparticles"/>
       <div>
         <div className={classes.root}>
         <form onSubmit={handleFormSubmit}>
@@ -164,6 +178,7 @@ const QuizSettingsForm: React.FC<SettingPropsType> = ({
       </form>
     </div>
   </div>
+  </>
   );
 }
 
