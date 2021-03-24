@@ -8,8 +8,6 @@ import {
 } from "@material-ui/core";
 import "./styles.css"
 
-const TOTAL_QUESTIONS = 10
-
 export function App() {
   const [loading, setLoading] = useState(true)
   const [questions, setQuestions] = useState<QuestionState[]>([])
@@ -50,7 +48,7 @@ export function App() {
     //Move onto the next question if not the last question
     const nextQuestion = number + 1
 
-    if (nextQuestion === TOTAL_QUESTIONS) {
+    if (nextQuestion === questions.length) {
       setGameOver(true)
     } else {
       setNumber(nextQuestion)
@@ -83,7 +81,7 @@ export function App() {
   return (
     <div className="App">
       <header>
-        {gameOver || loading || userAnswers.length === TOTAL_QUESTIONS ? (
+        {gameOver || loading || userAnswers.length === questions.length ? (
           <div>
           <QuizSettingsForm 
             newUserSetting={newUserSetting} 
@@ -92,7 +90,6 @@ export function App() {
         </div>
         ) : null}
         {!gameOver ? <p className="name">Hello {newSetting.name}</p> : null}
-        {!gameOver ? <p className="score">Score: {score}</p> : null}
         {!loading && !gameOver && (
           <QuestionCard
             questionNumber={number + 1}
@@ -102,19 +99,19 @@ export function App() {
             userAnswer={userAnswers ? userAnswers[number] : undefined}
             callback={checkAnswer}
           />
-        )}
-        {!gameOver && !loading && userAnswers.length === number + 1 &&
-          number !== TOTAL_QUESTIONS - 1 ? (
-            <Button 
-              className="next"
-              type="submit" 
-              variant="contained" 
-              color="primary"
-              onClick={nextQuestion}
-            >
-              Next Question
-            </Button>
-          ) : null}
+        )} 
+    {!gameOver && !loading && 
+      number !== number - 1 ? (
+        <Button 
+          className="next"
+          type="submit" 
+          variant="contained" 
+          color="primary"
+          onClick={nextQuestion}      
+        >
+          Next Question
+        </Button>
+      ) : null}      
       </header>
     </div>
   )
