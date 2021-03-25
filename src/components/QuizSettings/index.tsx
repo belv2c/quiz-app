@@ -48,21 +48,21 @@ export const QuizSettingsForm = ({
   const [categories, setCategories] = useState<CategoriesType[]>([])
   const [newSetting, setUserSetting] = useState<SettingType>({
       numberOfQuestions: 5,
-      difficulty: "easy",
+      difficulty: Difficulty.EASY,
       category: 9,
       categoryName: "General Knowledge",
       name: "",
     });
 
-    const classes = useStyles();
+    const classes = useStyles()
 
     useEffect(() => {
       const getCategoriesData = async () => {
-        const fetchedCategories = await fetchQuizCategories();
-        setCategories(fetchedCategories);
+        const fetchedCategories = await fetchQuizCategories()
+        setCategories(fetchedCategories)
       };
   
-      getCategoriesData();
+      getCategoriesData()
     }, []);
   
     if (!categories.length) {
@@ -74,7 +74,7 @@ export const QuizSettingsForm = ({
     }
   
     let categoryName = categories.filter((category) => {
-        return category.id === newSetting.category;
+        return category.id === newSetting.category
     });
   
     const appliedSettings: SettingType = {
@@ -140,7 +140,7 @@ export const QuizSettingsForm = ({
               onChange={(e) => {
                 setUserSetting({
                   ...newSetting,
-                  difficulty: String(e.target.value),
+                  difficulty: e.target.value as Difficulty,
                 })
               }}
             >

@@ -21,7 +21,7 @@ export enum Difficulty {
 export type Question = {
     category: string
     correct_answer: string
-    difficulty: string
+    difficulty: Difficulty
     incorrect_answers: string[]
     question: string
     type: string
@@ -37,7 +37,7 @@ export type QuizRequestType = {
   
 export type SettingType = {
     numberOfQuestions: number;
-    difficulty: string;
+    difficulty: Difficulty;
     category: number;
     categoryName: string;
     name: string;

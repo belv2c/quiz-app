@@ -3,10 +3,8 @@ import { fetchQuizQuestions } from "../../utils/quizUtil"
 import { QuizSettingsForm } from "../QuizSettings"
 import { Result } from "../Result"
 import { QuestionCard } from "../QuestionCard"
-import { AnswerObject, SettingType, QuestionState } from "../../types"
-import {
-  Button,
-} from "@material-ui/core"
+import { AnswerObject, Difficulty, SettingType, QuestionState } from "../../types"
+import { Button } from "@material-ui/core"
 import "./styles.css"
 
 export function App() {
@@ -21,7 +19,7 @@ export function App() {
 
   const [newSetting, newUserSetting] = useState<SettingType>({
     numberOfQuestions: 5,
-    difficulty: "",
+    difficulty: Difficulty.EASY,
     category: 9,
     categoryName: "",
     name: "",

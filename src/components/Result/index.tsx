@@ -79,13 +79,13 @@ export const Result = ({
           <Box p={3}>
             <Box py={1} className={classes.resultHeader}>
               <Typography variant="h5" align="center">
-              {totalScore > numberOfQuestions - 1 
-                ? <p>You're a quiz whiz ${name}</p> 
-                : <p>Better luck next time ${name}</p> }
+              { totalScore > numberOfQuestions - 2 
+                ? <p>You're a quiz whiz {name}</p> 
+                : <p>Better luck next time {name}</p> }
               </Typography>
             </Box>
             <Box pb={1} px={1} pt={3}>
-              {result.map((result: any, i: number) => (
+              {result.map((result, i) => (
                 <div key={i}>
                   <Box py={1}>
                     <Grid container>
