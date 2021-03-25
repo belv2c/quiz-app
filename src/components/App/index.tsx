@@ -4,7 +4,7 @@ import { QuizSettingsForm } from "../QuizSettings"
 import { Result } from "../Result"
 import { QuestionCard } from "../QuestionCard"
 import { AnswerObject, Difficulty, SettingType, QuestionState } from "../../types"
-import { Button } from "@material-ui/core"
+import { Button, Typography } from "@material-ui/core"
 import "./styles.css"
 
 export function App() {
@@ -24,7 +24,7 @@ export function App() {
     categoryName: "",
     name: "",
   })
-
+  
   const checkAnswer = (e: any) => {
     if (!gameOver) {
       //Users answer
@@ -90,11 +90,14 @@ export function App() {
       <header>
         {gameOver && !showResult  ? (
           <div>
-            <QuizSettingsForm 
-              newUserSetting={newUserSetting} 
-              setSendRequest={setSendRequest}
-            />
-          </div>
+            <Typography variant="h4" gutterBottom>
+              QUIZ WHIZ
+            </Typography>
+              <QuizSettingsForm 
+                newUserSetting={newUserSetting} 
+                setSendRequest={setSendRequest}
+              />
+          </div>         
           ) : null}
         {showResult && gameOver && (
           <Result
