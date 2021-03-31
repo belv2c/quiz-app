@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
+import { useQuery } from "react-query"
 import { CategoriesType, Difficulty, SettingType, SettingPropsType } from "../../types"
-import { fetchQuizCategories } from "../../utils/quizUtil"
+import { useQuizCategories, CategoryResponse } from "../../hooks/useQuizCategories"
 import { makeStyles } from '@material-ui/core/styles';
 import {
   InputLabel,
@@ -40,50 +41,44 @@ const useStyles = makeStyles({
   }
 });
 
-// TODO: add error handling
+// TODO: add form validation
 export const QuizSettingsForm = ({
   newUserSetting,
   setSendRequest,
 }: SettingPropsType) => {
-  const [categories, setCategories] = useState<CategoriesType[]>([])
   const [newSetting, setUserSetting] = useState<SettingType>({
-      numberOfQuestions: 5,
-      difficulty: Difficulty.EASY,
-      category: 9,
-      categoryName: "General Knowledge",
-      name: "",
-    });
+    numberOfQuestions: 5,
+    difficulty: Difficulty.EASY,
+    category: 9,
+    categoryName: "General Knowledge",
+    name: "",
+  });
+  
+  const classes = useStyles()
+  const { data } = useQuery<CategoryResponse, Error, CategoriesType[]>(
+    ["categories"], 
+    useQuizCategories
+  );
 
-    const classes = useStyles()
+  if (!data?.length) {
+    return (
+        <div className="loading">
+            ...loading
+        </div>
+    );
+  }
+  
+  let categoryName = data!.filter((category) => {
+      return category.id === newSetting.category
+  });
 
-    useEffect(() => {
-      const getCategoriesData = async () => {
-        const fetchedCategories = await fetchQuizCategories()
-        setCategories(fetchedCategories)
-      };
-  
-      getCategoriesData()
-    }, []);
-  
-    if (!categories.length) {
-      return (
-          <div className="loading">
-              ...loading
-          </div>
-      );
-    }
-  
-    let categoryName = categories.filter((category) => {
-        return category.id === newSetting.category
-    });
-  
-    const appliedSettings: SettingType = {
-      numberOfQuestions: newSetting.numberOfQuestions,
-      difficulty: newSetting.difficulty,
-      category: newSetting.category,
-      categoryName: categoryName[0].name,
-      name: newSetting.name
-    }
+  const appliedSettings: SettingType = {
+    numberOfQuestions: newSetting.numberOfQuestions,
+    difficulty: newSetting.difficulty,
+    category: newSetting.category,
+    categoryName: categoryName[0].name,
+    name: newSetting.name
+  }
   
     const handleFormSubmit = (e: React.FormEvent<EventTarget>) => {
       e.preventDefault()
@@ -164,7 +159,7 @@ export const QuizSettingsForm = ({
                 })
               }}
             >
-               {categories.map((category) =>
+               {data.map((category) =>
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
