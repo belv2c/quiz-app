@@ -1,4 +1,4 @@
-import { CategoriesType, Question, QuestionState } from "../../types"
+import { Question, QuestionState } from "../../types"
 
   export const shuffleArray = (array: any[]) =>
     [...array].sort(() => Math.random() - 0.5)
@@ -20,12 +20,3 @@ import { CategoriesType, Question, QuestionState } from "../../types"
         ]),
       }))
     }
-  
-export const fetchQuizCategories = async (): Promise<CategoriesType[]> => {
-  const endpoint = `https://opentdb.com/api_category.php`
-  const data = await (await fetch(endpoint)).json()
-
-     return data.trivia_categories.map((category: CategoriesType) => ({
-      ...category, 
-    }))
-  }

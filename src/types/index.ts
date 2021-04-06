@@ -36,11 +36,11 @@ export type QuizRequestType = {
 }
   
 export type SettingType = {
-    numberOfQuestions: number;
-    difficulty: Difficulty;
-    category: number;
-    categoryName: string;
-    name: string;
+    numberOfQuestions: number
+    difficulty: Difficulty
+    category: number
+    categoryName: string
+    name: string
 }
 
 export type SettingPropsType = {

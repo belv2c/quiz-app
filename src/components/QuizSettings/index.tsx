@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react"
-import { CategoriesType, Difficulty, SettingType, SettingPropsType } from "../../types"
-import { fetchQuizCategories } from "../../utils/quizUtil"
-import { makeStyles } from '@material-ui/core/styles';
+import React, { useState } from "react"
+import { Difficulty, SettingType, SettingPropsType } from "../../types"
+import { useQuizCategories } from "../../hooks/useQuizCategories"
+import { makeStyles } from "@material-ui/core/styles"
 import {
   InputLabel,
   FormControl,
@@ -9,7 +9,7 @@ import {
   TextField,
   Button,
   Box,
-} from "@material-ui/core";
+} from "@material-ui/core"
 import particlesConfig from "../../particlesConfig.json"
 import Particles from "react-tsparticles"
 
@@ -40,50 +40,41 @@ const useStyles = makeStyles({
   }
 });
 
-// TODO: add error handling
+// TODO: add form validation
 export const QuizSettingsForm = ({
   newUserSetting,
   setSendRequest,
 }: SettingPropsType) => {
-  const [categories, setCategories] = useState<CategoriesType[]>([])
   const [newSetting, setUserSetting] = useState<SettingType>({
-      numberOfQuestions: 5,
-      difficulty: Difficulty.EASY,
-      category: 9,
-      categoryName: "General Knowledge",
-      name: "",
-    });
+    numberOfQuestions: 5,
+    difficulty: Difficulty.EASY,
+    category: 9,
+    categoryName: "General Knowledge",
+    name: "",
+  });
+  
+  const classes = useStyles()
+  const { status, data } = useQuizCategories();
+  
+  if (status === "loading") {
+    return <span>...loading</span>
+  }
 
-    const classes = useStyles()
+  if (status === "error") {
+    return <span>...error</span>
+  }
+  
+  let categoryName = data!.filter((category) => {
+    return category.id === newSetting.category
+  });
 
-    useEffect(() => {
-      const getCategoriesData = async () => {
-        const fetchedCategories = await fetchQuizCategories()
-        setCategories(fetchedCategories)
-      };
-  
-      getCategoriesData()
-    }, []);
-  
-    if (!categories.length) {
-      return (
-          <div className="loading">
-              ...loading
-          </div>
-      );
-    }
-  
-    let categoryName = categories.filter((category) => {
-        return category.id === newSetting.category
-    });
-  
-    const appliedSettings: SettingType = {
-      numberOfQuestions: newSetting.numberOfQuestions,
-      difficulty: newSetting.difficulty,
-      category: newSetting.category,
-      categoryName: categoryName[0].name,
-      name: newSetting.name
-    }
+  const appliedSettings: SettingType = {
+    numberOfQuestions: newSetting.numberOfQuestions,
+    difficulty: newSetting.difficulty,
+    category: newSetting.category,
+    categoryName: categoryName[0].name,
+    name: newSetting.name
+  }
   
     const handleFormSubmit = (e: React.FormEvent<EventTarget>) => {
       e.preventDefault()
@@ -101,7 +92,7 @@ export const QuizSettingsForm = ({
             <TextField
               className={classes.textFields}
               type="text"
-              id="standard-basic"
+              id="standard-basic-name"
               label="What's your name?"
               value={newSetting.name}
               variant="outlined"
@@ -117,7 +108,7 @@ export const QuizSettingsForm = ({
             <TextField
               className={classes.textFields}
               type="number"
-              id="standard-basic"
+              id="standard-basic-questions"
               label="Number of Questions"
               name="numberOfQuestions"
               value={newSetting.numberOfQuestions}
@@ -131,11 +122,11 @@ export const QuizSettingsForm = ({
             />
           </div>
           <FormControl className={classes.textFields}>
-            <InputLabel htmlFor="grouped-native-select">
+            <InputLabel htmlFor="grouped-native-select-difficulty">
               Select Difficulty
             </InputLabel>
             <Select
-              id="grouped-native-select"
+              id="grouped-native-select-difficulty"
               native
               onChange={(e) => {
                 setUserSetting({
@@ -150,11 +141,11 @@ export const QuizSettingsForm = ({
             </Select>
           </FormControl>
           <FormControl className={classes.textFields}>
-            <InputLabel htmlFor="grouped-native-select">
+            <InputLabel htmlFor="grouped-native-select-category">
               Select Category
             </InputLabel>
             <Select
-              id="grouped-native-select"
+              id="grouped-native-select-category"
               native
               onChange={(e) => {
                 setUserSetting({
@@ -164,7 +155,7 @@ export const QuizSettingsForm = ({
                 })
               }}
             >
-               {categories.map((category) =>
+               {data?.map((category) =>
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
