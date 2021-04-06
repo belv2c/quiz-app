@@ -1,8 +1,7 @@
 import React, { useState } from "react"
-import { useQuery } from "react-query"
-import { CategoriesType, Difficulty, SettingType, SettingPropsType } from "../../types"
-import { useQuizCategories, CategoryResponse } from "../../hooks/useQuizCategories"
-import { makeStyles } from '@material-ui/core/styles';
+import { Difficulty, SettingType, SettingPropsType } from "../../types"
+import { useQuizCategories } from "../../hooks/useQuizCategories"
+import { makeStyles } from "@material-ui/core/styles"
 import {
   InputLabel,
   FormControl,
@@ -10,7 +9,7 @@ import {
   TextField,
   Button,
   Box,
-} from "@material-ui/core";
+} from "@material-ui/core"
 import particlesConfig from "../../particlesConfig.json"
 import Particles from "react-tsparticles"
 
@@ -55,21 +54,18 @@ export const QuizSettingsForm = ({
   });
   
   const classes = useStyles()
-  const { data } = useQuery<CategoryResponse, Error, CategoriesType[]>(
-    ["categories"], 
-    useQuizCategories
-  );
+  const { status, data } = useQuizCategories();
+  
+  if (status === "loading") {
+    return <span>...loading</span>
+  }
 
-  if (!data?.length) {
-    return (
-        <div className="loading">
-            ...loading
-        </div>
-    );
+  if (status === "error") {
+    return <span>...error</span>
   }
   
   let categoryName = data!.filter((category) => {
-      return category.id === newSetting.category
+    return category.id === newSetting.category
   });
 
   const appliedSettings: SettingType = {
@@ -96,7 +92,7 @@ export const QuizSettingsForm = ({
             <TextField
               className={classes.textFields}
               type="text"
-              id="standard-basic"
+              id="standard-basic-name"
               label="What's your name?"
               value={newSetting.name}
               variant="outlined"
@@ -112,7 +108,7 @@ export const QuizSettingsForm = ({
             <TextField
               className={classes.textFields}
               type="number"
-              id="standard-basic"
+              id="standard-basic-questions"
               label="Number of Questions"
               name="numberOfQuestions"
               value={newSetting.numberOfQuestions}
@@ -126,11 +122,11 @@ export const QuizSettingsForm = ({
             />
           </div>
           <FormControl className={classes.textFields}>
-            <InputLabel htmlFor="grouped-native-select">
+            <InputLabel htmlFor="grouped-native-select-difficulty">
               Select Difficulty
             </InputLabel>
             <Select
-              id="grouped-native-select"
+              id="grouped-native-select-difficulty"
               native
               onChange={(e) => {
                 setUserSetting({
@@ -145,11 +141,11 @@ export const QuizSettingsForm = ({
             </Select>
           </FormControl>
           <FormControl className={classes.textFields}>
-            <InputLabel htmlFor="grouped-native-select">
+            <InputLabel htmlFor="grouped-native-select-category">
               Select Category
             </InputLabel>
             <Select
-              id="grouped-native-select"
+              id="grouped-native-select-category"
               native
               onChange={(e) => {
                 setUserSetting({
@@ -159,7 +155,7 @@ export const QuizSettingsForm = ({
                 })
               }}
             >
-               {data.map((category) =>
+               {data?.map((category) =>
                   <option key={category.id} value={category.id}>
                     {category.name}
                   </option>
