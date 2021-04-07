@@ -1,10 +1,15 @@
+import { Button, Typography } from "@material-ui/core"
 import { useEffect, useState } from "react"
+import {
+  AnswerObject,
+  Difficulty,
+  QuestionState,
+  SettingType,
+} from "../../types"
 import { fetchQuizQuestions } from "../../utils/quizUtil"
+import { QuestionCard } from "../QuestionCard"
 import { QuizSettingsForm } from "../QuizSettings"
 import { Result } from "../Result"
-import { QuestionCard } from "../QuestionCard"
-import { AnswerObject, Difficulty, SettingType, QuestionState } from "../../types"
-import { Button, Typography } from "@material-ui/core"
 import "./styles.css"
 
 export function App() {
@@ -24,8 +29,8 @@ export function App() {
     categoryName: "",
     name: "",
   })
-  
-  const checkAnswer = (e: any) => {
+
+  const checkAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!gameOver) {
       //Users answer
       const answer = e.currentTarget.value
@@ -72,7 +77,7 @@ export function App() {
         const fetchedData = await fetchQuizQuestions(
           newSetting.numberOfQuestions,
           newSetting.difficulty,
-          newSetting.category
+          newSetting.category,
         )
         setQuestions(fetchedData)
         setScore(0)
@@ -82,29 +87,29 @@ export function App() {
         setGameOver(false)
       }
     }
-   fetchQuestions()
+    fetchQuestions()
   }, [newSetting, sendRequest])
 
   return (
     <div className="App">
       <header>
-        {gameOver && !showResult  ? (
+        {gameOver && !showResult ? (
           <div>
             <Typography variant="h4" gutterBottom>
               QUIZ WHIZ
             </Typography>
-              <QuizSettingsForm 
-                newUserSetting={newUserSetting} 
-                setSendRequest={setSendRequest}
-              />
-          </div>         
-          ) : null}
+            <QuizSettingsForm
+              newUserSetting={newUserSetting}
+              setSendRequest={setSendRequest}
+            />
+          </div>
+        ) : null}
         {showResult && gameOver && (
           <Result
             name={newSetting.name}
             totalScore={score}
             numberOfQuestions={newSetting.numberOfQuestions}
-            category={newSetting.categoryName}
+            category={newSetting.categoryName || ""}
             difficulty={newSetting.difficulty}
             callback={newQuiz}
           />
@@ -119,19 +124,18 @@ export function App() {
             userAnswer={userAnswers ? userAnswers[number] : undefined}
             callback={checkAnswer}
           />
-        )} 
-        {!gameOver && !loading && 
-          number !== number - 1 ? (
-            <Button 
-              className="next"
-              type="submit" 
-              variant="contained" 
-              color="primary"
-              onClick={nextQuestion}      
-            >
-              Next Question
-            </Button>
-          ) : null}      
+        )}
+        {!gameOver && !loading && number !== number - 1 ? (
+          <Button
+            className="next"
+            type="submit"
+            variant="contained"
+            color="primary"
+            onClick={nextQuestion}
+          >
+            Next Question
+          </Button>
+        ) : null}
       </header>
     </div>
   )

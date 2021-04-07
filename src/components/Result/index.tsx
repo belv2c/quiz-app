@@ -1,6 +1,5 @@
-import React from "react"
+import { Box, Button, Grid, Typography } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles"
-import { Box, Typography, Grid, Button } from "@material-ui/core"
 
 type ResultProps = {
   name: string
@@ -10,13 +9,13 @@ type ResultProps = {
   difficulty: string
   callback: () => void
 }
-  
+
 type resultStateType = [
   { name: string; value: string },
   { name: string; value: number },
   { name: string; value: string },
   { name: string; value: string },
-  { name: string; value: number }
+  { name: string; value: number },
 ]
 
 const useStyle = makeStyles((theme) => ({
@@ -29,8 +28,7 @@ const useStyle = makeStyles((theme) => ({
   },
   result: {
     width: "100%",
-    boxShadow:
-      "0 15px 15px -1px rgba(0, 0, 0, 0.1)",
+    boxShadow: "0 15px 15px -1px rgba(0, 0, 0, 0.1)",
     margin: "0 auto",
     background: "white",
     borderRadius: "0.5rem",
@@ -62,7 +60,7 @@ export const Result = ({
   difficulty,
   numberOfQuestions,
   totalScore,
-}: ResultProps ) => {
+}: ResultProps) => {
   const classes = useStyle()
   const result: resultStateType = [
     { name: "name", value: name },
@@ -79,9 +77,11 @@ export const Result = ({
           <Box p={3}>
             <Box py={1} className={classes.resultHeader}>
               <Typography variant="h5" align="center">
-              { totalScore > numberOfQuestions - 2 
-                ? <p>You're a quiz whiz {name}</p> 
-                : <p>Better luck next time {name}</p> }
+                {totalScore > numberOfQuestions - 2 ? (
+                  <p>You're a quiz whiz {name}</p>
+                ) : (
+                  <p>Better luck next time {name}</p>
+                )}
               </Typography>
             </Box>
             <Box pb={1} px={1} pt={3}>
