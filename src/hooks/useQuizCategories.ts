@@ -1,17 +1,18 @@
 import { useQuery } from "react-query"
 import { CategoriesType } from "../types"
-export type CategoryResponse = CategoriesType[];
+
+export type CategoryResponse = CategoriesType[]
 
 const getQuizCategories = async (): Promise<CategoryResponse> => {
   const response = await fetch(`https://opentdb.com/api_category.php`)
   if (!response.ok) {
     throw new Error("Problem fetching categories data")
   }
-  const result = await response.json();
+  const result = await response.json()
 
   return result.trivia_categories.map((category: CategoriesType[]) => ({
-    ...category
-  }));
+    ...category,
+  }))
 }
 
 export function useQuizCategories() {
