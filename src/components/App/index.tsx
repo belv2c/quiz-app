@@ -30,7 +30,7 @@ export function App() {
     name: "",
   })
 
-  const checkAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const checkAnswer = (e: any) => {
     if (!gameOver) {
       //Users answer
       const answer = e.currentTarget.value

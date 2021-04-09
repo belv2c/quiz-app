@@ -1,21 +1,14 @@
-import {
-  Card,
-  CardContent,
-  FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Typography,
-} from "@material-ui/core"
+import { Typography } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles"
 import cx from "clsx"
 import React from "react"
 import { AnswerObject } from "../../types"
+import { AnswerButton } from "../AnswerButton"
 
 interface Props {
   question: string
   answers: string[]
-  callback: (event: React.ChangeEvent<HTMLInputElement>, value: string) => void
+  callback: React.MouseEventHandler<HTMLButtonElement>
   userAnswer: AnswerObject | undefined
   questionNumber: number
   totalQuestions: number
@@ -25,19 +18,16 @@ type QuestionProps = React.PropsWithChildren<Props>
 
 const useStyles = makeStyles(() => ({
   root: {
-    width: "90%",
-    boxShadow:
-      "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    width: "40%",
     margin: "0 auto",
-    background: "white",
     borderRadius: 20,
-  },
-  content: {
-    padding: 24,
-    textAlign: "left",
   },
   title: {
     fontSize: 14,
+  },
+  question: {
+    fontSize: 20,
+    marginBottom: 50,
   },
 }))
 
@@ -45,14 +35,15 @@ export const QuestionCard = ({
   question,
   answers,
   callback,
+  userAnswer,
   questionNumber,
   totalQuestions,
 }: QuestionProps) => {
   const cardStyles = useStyles()
 
   return (
-    <Card className={cx(cardStyles.root)}>
-      <CardContent className={cardStyles.content}>
+    <div className={cx(cardStyles.root)}>
+      <div>
         <div>
           <Typography
             className={cardStyles.title}
@@ -61,30 +52,14 @@ export const QuestionCard = ({
           >
             Question: {questionNumber} / {totalQuestions}
           </Typography>
-          <p>{question}</p>
-          <div>
-            {answers.map((answer) => (
-              <div key={answer}>
-                <form>
-                  <FormControl component="fieldset">
-                    <RadioGroup
-                      aria-label="quiz"
-                      name="quiz"
-                      onChange={callback}
-                    >
-                      <FormControlLabel
-                        value={answer}
-                        control={<Radio />}
-                        label={answer}
-                      />
-                    </RadioGroup>
-                  </FormControl>
-                </form>
-              </div>
-            ))}
-          </div>
+          <p className={cardStyles.question}>{question}</p>
+          <AnswerButton
+            answers={answers}
+            callback={callback}
+            userAnswer={userAnswer}
+          />
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }
