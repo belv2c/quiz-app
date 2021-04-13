@@ -1,8 +1,8 @@
-import { Typography } from "@material-ui/core"
+import { Step, StepLabel, Stepper } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles"
 import cx from "clsx"
 import React from "react"
-import { AnswerObject } from "../../types"
+import { AnswerObject, QuestionState } from "../../types"
 import { AnswerButton } from "../AnswerButton"
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
   callback: React.MouseEventHandler<HTMLButtonElement>
   userAnswer: AnswerObject | undefined
   questionNumber: number
-  totalQuestions: number
+  questions: QuestionState[]
 }
 
 type QuestionProps = React.PropsWithChildren<Props>
@@ -37,7 +37,7 @@ export const QuestionCard = ({
   callback,
   userAnswer,
   questionNumber,
-  totalQuestions,
+  questions,
 }: QuestionProps) => {
   const cardStyles = useStyles()
 
@@ -45,13 +45,13 @@ export const QuestionCard = ({
     <div className={cx(cardStyles.root)}>
       <div>
         <div>
-          <Typography
-            className={cardStyles.title}
-            color="textSecondary"
-            gutterBottom
-          >
-            Question: {questionNumber} / {totalQuestions}
-          </Typography>
+          <Stepper activeStep={questionNumber - 1} alternativeLabel={false}>
+            {questions.map((label, i) => (
+              <Step key={i}>
+                <StepLabel />
+              </Step>
+            ))}
+          </Stepper>
           <p className={cardStyles.question}>{question}</p>
           <AnswerButton
             answers={answers}

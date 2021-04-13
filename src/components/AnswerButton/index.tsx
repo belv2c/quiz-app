@@ -11,6 +11,9 @@ interface Props {
 
 const useStyles = makeStyles(() => ({
   root: {
+    justifyContent: "center",
+  },
+  button: {
     padding: "10px 20px",
     overflow: "hidden",
     position: "relative",
@@ -25,14 +28,14 @@ const useStyles = makeStyles(() => ({
 }))
 
 export const AnswerButton = ({ answers, callback, userAnswer }: Props) => {
-  const buttonStyles = useStyles()
+  const styles = useStyles()
 
   return (
-    <Grid container spacing={3}>
+    <Grid className={styles.root} container spacing={3}>
       {answers.map((answer) => (
-        <Grid item xs={6} key={answer}>
+        <Grid item key={answer}>
           <Button
-            className={buttonStyles.root}
+            className={styles.button}
             disabled={userAnswer ? true : false}
             value={answer}
             onClick={callback}
