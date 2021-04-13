@@ -1,43 +1,33 @@
-import {
-  Card,
-  CardContent,
-  FormControl,
-  FormControlLabel,
-  Radio,
-  RadioGroup,
-  Typography,
-} from "@material-ui/core"
+import { Step, StepLabel, Stepper } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles"
 import cx from "clsx"
 import React from "react"
-import { AnswerObject } from "../../types"
+import { AnswerObject, QuestionState } from "../../types"
+import { AnswerButton } from "../AnswerButton"
 
 interface Props {
   question: string
   answers: string[]
-  callback: (event: React.ChangeEvent<HTMLInputElement>, value: string) => void
+  callback: React.MouseEventHandler<HTMLButtonElement>
   userAnswer: AnswerObject | undefined
   questionNumber: number
-  totalQuestions: number
+  questions: QuestionState[]
 }
 
 type QuestionProps = React.PropsWithChildren<Props>
 
 const useStyles = makeStyles(() => ({
   root: {
-    width: "90%",
-    boxShadow:
-      "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+    width: "40%",
     margin: "0 auto",
-    background: "white",
     borderRadius: 20,
-  },
-  content: {
-    padding: 24,
-    textAlign: "left",
   },
   title: {
     fontSize: 14,
+  },
+  question: {
+    fontSize: 20,
+    marginBottom: 50,
   },
 }))
 
@@ -45,46 +35,31 @@ export const QuestionCard = ({
   question,
   answers,
   callback,
+  userAnswer,
   questionNumber,
-  totalQuestions,
+  questions,
 }: QuestionProps) => {
   const cardStyles = useStyles()
 
   return (
-    <Card className={cx(cardStyles.root)}>
-      <CardContent className={cardStyles.content}>
+    <div className={cx(cardStyles.root)}>
+      <div>
         <div>
-          <Typography
-            className={cardStyles.title}
-            color="textSecondary"
-            gutterBottom
-          >
-            Question: {questionNumber} / {totalQuestions}
-          </Typography>
-          <p>{question}</p>
-          <div>
-            {answers.map((answer) => (
-              <div key={answer}>
-                <form>
-                  <FormControl component="fieldset">
-                    <RadioGroup
-                      aria-label="quiz"
-                      name="quiz"
-                      onChange={callback}
-                    >
-                      <FormControlLabel
-                        value={answer}
-                        control={<Radio />}
-                        label={answer}
-                      />
-                    </RadioGroup>
-                  </FormControl>
-                </form>
-              </div>
+          <Stepper activeStep={questionNumber - 1} alternativeLabel={false}>
+            {questions.map((label, i) => (
+              <Step key={i}>
+                <StepLabel />
+              </Step>
             ))}
-          </div>
+          </Stepper>
+          <p className={cardStyles.question}>{question}</p>
+          <AnswerButton
+            answers={answers}
+            callback={callback}
+            userAnswer={userAnswer}
+          />
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

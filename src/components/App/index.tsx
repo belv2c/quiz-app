@@ -1,4 +1,5 @@
 import { Button, Typography } from "@material-ui/core"
+import { makeStyles } from "@material-ui/core/styles"
 import { useEffect, useState } from "react"
 import {
   AnswerObject,
@@ -30,7 +31,24 @@ export function App() {
     name: "",
   })
 
-  const checkAnswer = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const useStyles = makeStyles(() => ({
+    root: {
+      padding: "10px 20px",
+      overflow: "hidden",
+      position: "relative",
+      textDecoration: "none",
+      borderRadius: 20,
+      background: "rgba(76, 175, 80, 0.3)",
+      border: "none",
+      fontSize: "14px",
+      textAlign: "center",
+      margin: 40,
+    },
+  }))
+
+  const appStyles = useStyles()
+
+  const checkAnswer = (e: any) => {
     if (!gameOver) {
       //Users answer
       const answer = e.currentTarget.value
@@ -114,23 +132,21 @@ export function App() {
             callback={newQuiz}
           />
         )}
-        {!gameOver ? <p className="name">Hi, {newSetting.name}</p> : null}
         {!loading && !gameOver && (
           <QuestionCard
             questionNumber={number + 1}
-            totalQuestions={newSetting.numberOfQuestions}
             question={questions[number].question}
             answers={questions[number].answer}
             userAnswer={userAnswers ? userAnswers[number] : undefined}
             callback={checkAnswer}
+            questions={questions}
           />
         )}
         {!gameOver && !loading && number !== number - 1 ? (
           <Button
-            className="next"
+            className={appStyles.root}
             type="submit"
             variant="contained"
-            color="primary"
             onClick={nextQuestion}
           >
             Next Question
